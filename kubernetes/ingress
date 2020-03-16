@@ -1,0 +1,22 @@
+#Get the IBM-provided domain
+ibmcloud ks cluster get --cluster wse-poc| grep Ingress
+wse-poc.us-south.containers.appdomain.cloud
+wse-poc
+
+#Get the IBM-provided TLS secret for your cluster.
+ibmcloud ks cluster get --cluster wse-poc | grep Ingress
+Ingress Subdomain:      mycluster-12345.us-south.containers.appdomain.cloud
+Ingress Secret:         <tls_secret>
+
+
+#Create the Ingress resource for your cluster. Ensure that the resource deploys into the same namespace as the app services that you specified in the resource.
+kubectl apply -f esmtcingressresource.yaml -n contract-squad-dev
+
+#Verify that the Ingress resource was created successfully.
+kubectl describe ingress esmtcingressresource -n contract-squad-dev
+
+kubectl port-forward esmtcappcicd-deployment-777d7c5697-757kn 8082:8082  -n contract-squad-dev
+
+#check ingress logs
+kubectl get pods -n kube-system | grep alb
+kubectl logs public-crc5295d9babbc465ba79c16891bb85920-alb1-57d6f7d8b9-fx7mz nginx-ingress -n kube-system| grep esmtc

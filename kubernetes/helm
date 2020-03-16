@@ -1,0 +1,28 @@
+#Check whether you already installed Tiller with a Kubernetes service account in your cluster.
+kubectl get serviceaccount --all-namespaces | grep tiller
+
+#Create a cluster role binding for the Tiller service account. Replace <namespace> with the namespace where Tiller is installed in your cluster.
+kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller -n kube-system
+
+#Update Tiller. Replace <tiller_service_account_name> with the name of the Kubernetes service account for Tiller that you retrieved in the previous step.
+helm init --upgrade --service-account <tiller_service_account_name>
+#Verify that the tiller-deploy pod has a Status of Running in your cluster.
+kubectl get pods -n kube-system -l app=helm
+
+#Add the IBM Cloud Helm repositories to your Helm instance.
+helm repo add iks-charts https://icr.io/helm/iks-charts
+
+#Update the repos to retrieve the latest versions of all Helm charts.
+helm repo update
+
+#List the Helm charts that are currently available in the IBM Cloud repositories.
+helm search iks-charts
+
+
+#Error: no available release name found
+#the following commands resolved the error for me:
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+#windows
+kubectl patch deploy --namespace kube-system tiller-deploy -p "{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}"

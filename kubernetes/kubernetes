@@ -1,0 +1,73 @@
+#创建镜像
+docker build -t esmtcappcicd:v1 .
+#创建容器
+docker create esmtcappcicd:v1
+
+#镜像仓库列表
+ibmcloud ks cluster ls
+
+cd C:\Users\XinBinCui\CUIXINBIN\GitHub\esmt_app\login-client
+#创建镜像并上传到镜像仓库
+ibmcloud cr build -t us.icr.io/wse-esmtc/esmtcappcicd:1 .
+#镜像仓库
+bx cr images
+#登陆集群
+bx cs cluster-config esmtccluster
+#deployment
+kubectl --namespace=contract-squad-dev create deployment esmtcappcicd-deployment --image=us.icr.io/wse-esmtc/esmtcappcicd:1
+#service
+kubectl --namespace=contract-squad-dev expose deployment/esmtcappcicd-deployment --type=NodePort --port=8082 --name=esmtcappcicd-service --target-port=8099
+kubectl --namespace=contract-squad-dev describe service esmtcappcicd-service
+
+
+#查看区域
+ibmcloud regions
+us-south
+
+ibmcloud login --sso
+ibmcloud logout
+
+#create namespace(registry)
+bx cr namespace-add wse-esmtc
+
+#replicaset
+kubectl describe rs -n contract-squad-dev
+
+kubectl apply -f k8s/esmtcweb-service.yaml
+
+#查看yaml配置
+kubectl get pods frontend-9si5l -o yaml
+
+#You can scale a Deployment by using the following command:
+kubectl get deployment -n contract-squad-dev
+$ kubectl scale deployment esmtcwebcicd-deployment --replicas=2 -n contract-squad-dev
+
+#查看日志
+kubectl logs esmtcappcicd-deployment-5d64ff4fc-fj4jg -n contract-squad-dev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

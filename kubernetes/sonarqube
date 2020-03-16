@@ -1,0 +1,11 @@
+docker pull sonarqube:7.8-community
+docker tag sonarqube:7.8-community us.icr.io/wse-esmtc/sonarqube
+docker push us.icr.io/wse-esmtc/sonarqube:latest
+kubectl create deployment sonarqube-deployment --image=us.icr.io/wse-esmtc/sonarqube:latest
+kubectl expose deployment/sonarqube-deployment --type=NodePort --port=9000 --name=sonarqube-service --target-port=9000
+kubectl describe service sonarqube-service
+bx cs workers wse-poc
+
+http://169.63.242.165:32011
+
+mvn sonar:sonar -Dsonar.projectKey=esmtc-app-dev -Dsonar.host.url=http://169.63.242.165:32011 -Dsonar.login=944c25fa72e84e069d87f22f8cb07957392d3246

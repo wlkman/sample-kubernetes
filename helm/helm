@@ -1,0 +1,176 @@
+#查看版本
+helm version
+
+##########################################charts###################################################
+#查看当前安装的charts
+helm list
+helm list --all
+
+#查询 charts
+helm search nginx
+
+#下载远程安装包到本地。
+helm fetch rancher-stable/rancher
+
+#查看package详细信息
+helm inspect chart
+
+#安装charts
+helm install --name redis --namespaces prod bitnami/redis
+helm install happy-panda stable/mariadb
+
+#查看charts状态
+helm status redis
+
+#删除charts
+helm delete --purge redis
+
+#Creating Your Own Charts
+helm create mychart
+
+# When it’s time to package the chart up for distribution, you can run the helm package command:
+helm package mychart
+
+# And that chart can now easily be installed by helm install:
+helm install mychart ./mychart-0.1.0.tgz
+
+# The best way to get started with a new chart is to use the helm create command to scaffold out an example we can build on. Use this command to create a new chart named mychart in a new directory:
+helm create mychart
+
+# We can do a dry-run of a helm install and enable debug to inspect the generated definitions:
+helm install --dry-run --debug ./mychart
+
+# Let’s go ahead and deploy our NGINX chart using the helm install command:
+helm install --name example ./mychart --set service.type=NodePort
+
+# Packaging it all up to share
+helm package ./mychart
+
+# A user can install from this package instead of a local directory by passing the package as the parameter to helm install.
+helm install example3 mychart-0.1.0.tgz --set service.type=NodePort
+# you should be able to see your chart in the local repository and install it from there:
+helm search local
+
+# Dependencies
+# As the applications your packaging as charts increase in complexity, you might find you need to pull in a dependency such as a database. Helm allows you to specify sub-charts that will be created as part of the same release. To define a dependency, create a requirements.yaml file in the chart root directory:
+cat > ./mychart/requirements.yaml <<EOF
+# dependencies:
+# - name: mariadb
+# version: 0.6.0
+# repository: https://kubernetes-charts.storage.googleapis.com
+# EOF
+
+# the requirements.yaml file allows you to manage your chart’s dependencies and their versions. When updating dependencies, a lockfile is generated so that subsequent fetching of dependencies use a known, working version. Run the following command to pull in the MariaDB dependency we defined:
+helm dep update ./mychart
+# Hang tight while we grab the latest from your chart repositories...
+# ...Unable to get an update from the "local" chart repository (http://127.0.0.1:8879/charts):
+#     Get http://127.0.0.1:8879/charts/index.yaml: dial tcp 127.0.0.1:8879: getsockopt: connection refused
+# ...Successfully got an update from the "stable" chart repository
+# ...Successfully got an update from the "incubator" chart repository
+# Update Complete. *Happy Helming!*
+# Saving 1 charts
+# Downloading mariadb from repo [https://kubernetes-charts.storage.googleapis.com](https://kubernetes-charts.storage.googleapis.com)
+# ls ./mychart/charts
+# mariadb-0.6.0.tgz
+# Helm has found a matching version in the stable repository and has fetched it into my chart’s sub-chart directory. Now when we go and install the chart, we’ll see that MariaDB’s objects are created too:
+
+
+##########################################repo###################################################
+#增加repo
+helm repo add stable https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+
+#repositories list
+helm repo list
+
+#更新repo仓库资源
+helm repo update
+
+#searches the Helm Hub, which comprises helm charts from dozens of different repositories.
+helm search hub
+helm search hub wordpress
+
+#searches the repositories that you have added to your local helm client
+helm search repo
+
+# 先移除原先的仓库
+helm repo remove stable
+
+##########################################Install an Mysql with Helm###################################################
+#searches
+helm search mysql
+
+#First update the repo, just as you’d do with apt-get update:
+helm repo update
+
+#Next, we’ll do the actual install:
+helm install stable/mysql
+
+#若遇到Unable to get an update from the “stable” chart repository (https://kubernetes-charts.storage.googleapis.com) 错误
+#手动更换stable 存储库为阿里云的存储库
+# 先移除原先的仓库
+helm repo remove stable
+# 添加新的仓库地址
+helm repo add stable https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+# 更新仓库
+helm repo update
+
+#Get the mysql password
+kubectl get secrets
+kubectl get secret open-hound-mysql -o yaml
+echo "amI2MXl6d1Jmcg==" | base64 --decode
+#jb61yzwRfr[
+
+# Create the mysql client
+# Now we have the password, but if we try to just connect with the mysql client on any old machine, we’ll find that there’s no connectivity outside of the cluster. For example, if I try to connect with my local mysql client, I get an error:
+# So what we need to do is create a pod on which we can run the client. Start by creating a new pod using the ubuntu:16.04 image:
+kubectl run -i --tty ubuntu --image=ubuntu:16.04 --restart=Never 
+
+# When it’s running, go ahead and attach to it:
+$ kubectl attach ubuntu -i -t
+
+# Next install the mysql client:
+apt-get update && apt-get install mysql-client -y
+
+# Now we should be ready to actually connect. Remember to use the password we extracted in the previous step.
+mysql -h open-hound-mysql -p
+
+
+# Working with revisions
+helm list
+# As you can see, we created a revision called open-hound. It’s based on the mysql-0.3.4 chart, and its status is DEPLOYED.
+# We could also get back the information we got when it was first deployed by getting the status of the revision:
+helm status open-hound
+
+# Now, if we wanted to, we could go ahead and delete the revision:
+helm delete open-hound
+
+# Now if you list all of the active revisions, it’ll be gone.
+$ helm ls
+
+# However, even though the revision s gone, you can still see the status:
+helm status open-hound
+
+# OK, so what if we decide that we’ve changed our mind, and we want to roll back that deletion? Fortunately, Helm is designed for that. We can specify that we want to rollback our application to a specific revision (in this case, 1).
+helm rollback open-hound 1
+
+# We can see that the application is back, and the revision number has been incremented:
+helm ls
+
+# We can also check the status:
+helm status open-hound
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
