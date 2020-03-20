@@ -18,7 +18,8 @@ kubectl --namespace=contract-squad-dev create deployment esmtcappcicd-deployment
 #service
 kubectl --namespace=contract-squad-dev expose deployment/esmtcappcicd-deployment --type=NodePort --port=8082 --name=esmtcappcicd-service --target-port=8099
 kubectl --namespace=contract-squad-dev describe service esmtcappcicd-service
-
+#cluster
+bx cs workers wse-poc
 
 #查看区域
 ibmcloud regions
