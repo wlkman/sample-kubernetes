@@ -17,12 +17,12 @@ helm inspect chart
 
 #安装charts
 helm install --name redis --namespaces prod bitnami/redis
-helm install happy-panda stable/mariadb
+helm install --name tomcat --namespace contract-squad-dev ibm-community/ibm-tomcat-dev
 
-#查看charts状态
+#displays the status of the named release
 helm status redis
 
-#删除charts
+#given a release name, delete the release from Kubernetes
 helm delete --purge redis
 
 #Creating Your Own Charts
@@ -83,7 +83,7 @@ helm repo add stable https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 helm repo list
 
 #更新repo仓库资源
-helm repo update
+    helm repo update
 
 #searches the Helm Hub, which comprises helm charts from dozens of different repositories.
 helm search hub

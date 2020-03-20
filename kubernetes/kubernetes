@@ -3,7 +3,7 @@ docker build -t esmtcappcicd:v1 .
 #创建容器
 docker create esmtcappcicd:v1
 
-#镜像仓库列表
+#集群列表
 ibmcloud ks cluster ls
 
 cd C:\Users\XinBinCui\CUIXINBIN\GitHub\esmt_app\login-client
