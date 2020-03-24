@@ -28,9 +28,6 @@ us-south
 ibmcloud login --sso
 ibmcloud logout
 
-#create namespace(registry)
-bx cr namespace-add wse-esmtc
-
 #replicaset
 kubectl describe rs -n contract-squad-dev
 
@@ -38,6 +35,10 @@ kubectl apply -f k8s/esmtcweb-service.yaml
 
 #查看yaml配置
 kubectl get pods frontend-9si5l -o yaml
+#只显示名字
+kubectl get pods -o name
+#字段选择器
+kubectl get pods --field-selector status.phase=Running
 
 #You can scale a Deployment by using the following command:
 kubectl get deployment -n contract-squad-dev
@@ -46,9 +47,8 @@ $ kubectl scale deployment esmtcwebcicd-deployment --replicas=2 -n contract-squa
 #查看日志
 kubectl logs esmtcappcicd-deployment-5d64ff4fc-fj4jg -n contract-squad-dev
 
-
-
-
+#删除部署
+kubectl delete deployment tomcat-ibm-tomcat-dev -n contract-squad-dev
 
 
 
