@@ -50,7 +50,8 @@ kubectl logs esmtcappcicd-deployment-5d64ff4fc-fj4jg -n contract-squad-dev
 #删除部署
 kubectl delete deployment tomcat-ibm-tomcat-dev -n contract-squad-dev
 
-
+#k8s部署失败原因
+kubectl describe pods  *** --namespace=***
 
 
 
