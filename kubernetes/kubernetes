@@ -32,7 +32,11 @@ ibmcloud logout
 kubectl describe rs -n contract-squad-dev
 
 kubectl apply -f k8s/esmtcweb-service.yaml
+#发布当前目录所有yaml文件
+kubectl apply -f .
 
+#po是pods的简写，show-labels将显示pod的labels
+kubectl get po --show-labels
 #查看yaml配置
 kubectl get pods frontend-9si5l -o yaml
 #只显示名字
@@ -44,7 +48,7 @@ kubectl get pods --field-selector status.phase=Running
 kubectl get deployment -n contract-squad-dev
 $ kubectl scale deployment esmtcwebcicd-deployment --replicas=2 -n contract-squad-dev
 
-#查看日志
+#查看日志（pod启动失败可从中找到原因）
 kubectl logs esmtcappcicd-deployment-5d64ff4fc-fj4jg -n contract-squad-dev
 
 #删除部署
